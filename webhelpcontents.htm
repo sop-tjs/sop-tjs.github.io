@@ -1,0 +1,397 @@
+﻿<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Frameset//EN" "http://www.w3.org/TR/html4/frameset.dtd">
+<!-- saved from url=(0014)about:internet -->
+<html>
+<head>
+<title>Standard Operating Procedure TJS Group</title>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<style type="text/css"> 
+<!-- 
+.selected {font-weight: normal;background-color: #E2E2E2;padding:0px,2px,0px,2px;}
+.unselected { font-weight: normal;padding:0px,2px,0px,2px;}
+.hand { cursor: hand; }
+.p {height: 16px;width: 16px;vertical-align: middle;border: 0;}
+div,body { font-family: Tahoma, Verdana; font-size: 11px; }
+A:link {text-decoration: none; color:#000000}
+A:visited {text-decoration: none; color: #000000}
+A:active {text-decoration: none; color: #000000 }
+A:hover {text-decoration: none; color: #FF0000 }
+
+-->
+</style>
+
+<SCRIPT LANGUAGE="JavaScript">
+<!--
+var cl,pn,pm,bl;
+var path = 'icons/';
+var pos = 0;
+var icon;
+var tar = 'content';
+var display;
+var imgi;
+var AutoCollapse;
+var LastSelected = -1;
+var loaded = false;
+var max;
+var divlist;
+
+function SetEnv(v,a){
+
+if(v==0){ 
+	pn = [['daplus.gif','daminus.gif'],['tplus.gif','tminus.gif'],['uaplus.gif','uaminus.gif'],['splus.gif','sminus.gif']];
+	PreloadImg('downangle.gif','tshaped.gif','upangle.gif','sline.gif','daplus.gif','daminus.gif','tplus.gif','tminus.gif','uaplus.gif','uaminus.gif','splus.gif','sminus.gif','blank.gif','line.gif');
+}else{
+	pn = [['plus.gif','minus.gif']];
+	PreloadImg('plus.gif','minus.gif','blank.gif');
+
+}
+AutoCollapse = a;
+}
+
+ function PreloadImg(){
+if (document.images) { 
+	var imgs = PreloadImg.arguments; 
+	var pload = new Array();
+	for (var i=0; i<imgs.length; i++) { 
+		pload[i] = new Image; 
+		pload[i].src = path + imgs[i]; 
+	} 
+} 
+ } 
+
+function get(o){
+var x;
+if(document.all) x=document.all[o]; 
+if(document.getElementById) x=document.getElementById(o);
+
+return x;
+}
+
+
+function pnImg(img){
+var i,j;
+for(i=0;i<=3;i++){
+	for(j=0;j<=1;j++){
+	if(img.substr(img.lastIndexOf('/') + 1)== pn[i][j]){
+		return i;
+	}
+	}
+}
+}
+function icon(img){
+var f;
+f = img.substr(img.lastIndexOf('/') + 1);
+if( f=='1.gif' || f=='2.gif'){
+	return ['1.gif','2.gif'];
+}
+if( f=='3.gif' || f=='4.gif'){
+	return ['3.gif','4.gif'];
+}
+if( f=='5.gif' || f=='6.gif'){
+	return ['5.gif','6.gif'];
+}
+if( f=='7.gif' || f=='8.gif'){
+	return ['7.gif','8.gif'];
+}
+return [f,f];
+}
+
+function show(id){
+get('d' + id).style.display='block';
+if(get('imgn' + id )) get('imgn' + id ).src= path + pn[pnImg(get('imgn' + id ).src)][1];
+get('img' + id ).src= path + icon(get('img' + id ).src)[1];
+
+}
+
+function collapse(id){
+get('d' + id ).style.display='none';
+if(get('imgn' + id )) get('imgn' + id ).src= path + pn[pnImg(get('imgn' + id ).src)][0];
+get('img' + id ).src= path + icon(get('img' + id ).src)[0];
+
+}
+
+function collapseAll(){
+var i;
+var o;
+for(i=0;i<=divlist.length-1;i++){
+	if(o=get('d' + divlist[i])){
+		if(o.style.display!='none'){ 
+			collapse(divlist[i]);
+		}
+	}
+}
+}
+
+function showAll(){
+var i;
+var o;
+for(i=0;i<=divlist.length-1;i++){
+	if(o=get('d' + divlist[i])){
+		if(o.style.display!='block'){ 
+			show(divlist[i]);
+		}
+	}
+}
+}
+
+function unselectAll(){
+var i=0;
+while(get("l" + i)){
+	get("l" + i).className = "unselected";
+	i++;
+}
+}
+
+function clickNode(index){
+var e;
+
+e = get("l" + index);
+if(e==null) return;
+e = e.parentNode;
+if(e.nodeName == 'A'){
+	if(e.href!= window.location.href + '#'){
+		parent.parent.content.location.href = e.href;
+	}else{
+		selectNode(index);
+	}
+	e.onclick;
+}
+}
+
+function showParent(ele){
+var e;
+e = ele.parentNode;
+
+if(e==null) return;
+
+if(e.nodeName == 'DIV'){
+	if(e.id!='') show(e.id.substring(1,e.id.length ));
+}else if(e.nodeName == 'A'){
+
+}
+showParent(e);
+}
+
+function showNode(index){
+showParent(get("l" + index));
+LinkClick(index);
+}
+
+function selectNode(index){
+if(LastSelected!=index){
+//collapseAll();
+showParent(get("l" + index));
+LinkClick(index);
+get('l' + index).scrollIntoView(true);
+
+
+//alert(get('l' + index).offsetHeight + '|' + document.body.clientHeight + '|' + document.body.offsetHeight);
+window.scrollTo(0,document.body.scrollTop); // - document.body.clientHeight /3);
+}
+}
+
+
+function NodeClick(id){
+if(get('d' + id ).style.display=='none'){
+	show(id);
+}else{
+	collapse(id);
+}
+return false;
+}
+
+function LinkDblClick(id){
+if(!AutoCollapse){
+	if(get('d' + id ).style.display=='none'){
+		show(id);
+	}else{
+		collapse(id);
+	}
+}
+return false;
+}
+
+function LinkClick(index,hasChild,r){
+if(AutoCollapse && hasChild){
+	if(get('d' + index ).style.display=='none'){
+		collapseAll()
+		showParent(get('l' + index));
+		show(index);
+	}else{
+		collapseAll()
+		showParent(get('l' + index));	
+		collapse(index);
+	}
+}
+if(LastSelected!=-1){
+	get('l' + LastSelected).className = "unselected";
+}
+get('l' + index).className = "selected";
+LastSelected = index;
+return r;
+}
+
+function body_onmousemove(event){
+if(typeof(document.body.scrollTop)!='undefined'){
+if(parseInt(event.clientX)<5){
+window.scroll(0,document.body.scrollTop);}}
+if(typeof(window.scrollY)!='undefined'){
+if(parseInt(event.clientX)<5){
+window.scrollTo(0,window.scrollY);}}
+}
+
+window.defaultStatus = '';
+
+function body_onload(){
+get('loading').style.display='none';
+loaded = true;
+if(parent.parent.content.document.readyState){
+	if(parent.parent.content.document.readyState == 'complete'){
+		try{parent.parent.content.syn();}catch(e){};
+	}
+}else{
+	if(parent.parent.contentLoaded){
+		try{parent.parent.content.syn();}catch(e){};
+	}
+}
+}
+
+//-->
+</SCRIPT>
+<script language="JavaScript" src="languages.js"></script>
+
+</head>
+
+<body bgcolor="#ffffff" leftmargin="5" topmargin="5" marginwidth="5" marginheight="5" onmousemove="body_onmousemove(event);" onload="body_onload();">
+<div id="loading"><font color="#FF0000" size="1"> Loading table of contents... 
+</font><br><br></div>
+<script>SetEnv(0,true)</script><div><nobr><img src="icons/downangle.gif" class="p"><a href="topics/Cover.htm" onclick="return LinkClick('0',false,true)" target="content" title="Cover" onmousemove="window.status='Cover'"><img src="icons/11.gif" class="p"> <span id="l0" class="unselected">Cover</span></a></nobr></div>
+<div><nobr><img src="icons/tshaped.gif" class="p"><a href="topics/003 DAFTAR_ISI.htm" onclick="return LinkClick('1',false,true)" target="content" title="DAFTAR ISI SOP TJS GROUP" onmousemove="window.status='DAFTAR ISI SOP TJS GROUP'"><img src="icons/11.gif" class="p"> <span id="l1" class="unselected">DAFTAR ISI SOP TJS GROUP</span></a></nobr></div>
+<div><nobr><a href="#" onClick="return NodeClick('2')"><img id="imgn2" src="icons/tplus.gif" class="p"></a><a href="topics/PENDAHULUAN.htm" onclick="return LinkClick('2',true,true)" onDblClick="return LinkDblClick('2')" target="content" title="PENDAHULUAN" onmousemove="window.status='PENDAHULUAN'"><img id="img2" src="icons/1.gif" class="p"> <span id="l2" class="unselected">PENDAHULUAN</span></a></nobr></div>
+<div id="d2" style="display:none"><div><nobr><img src="icons/line.gif" class="p"><img src="icons/tshaped.gif" class="p"><a href="topics/PENGANTAR.htm" onclick="return LinkClick('3',false,true)" target="content" title="PENGANTAR" onmousemove="window.status='PENGANTAR'"><img src="icons/11.gif" class="p"> <span id="l3" class="unselected">PENGANTAR</span></a></nobr></div>
+<div><nobr><img src="icons/line.gif" class="p"><img src="icons/upangle.gif" class="p"><a href="topics/HELP.htm" onclick="return LinkClick('4',false,true)" target="content" title="HELP" onmousemove="window.status='HELP'"><img src="icons/11.gif" class="p"> <span id="l4" class="unselected">HELP</span></a></nobr></div>
+</div><div><nobr><img src="icons/tshaped.gif" class="p"><a href="topics/SOP-SEKPER-01_SOP_SEKRETARIS_PERUSAHAAN.htm" onclick="return LinkClick('5',false,true)" target="content" title="SOP SEKRETARIS PERUSAHAAN" onmousemove="window.status='SOP SEKRETARIS PERUSAHAAN'"><img src="icons/11.gif" class="p"> <span id="l5" class="unselected">SOP SEKRETARIS PERUSAHAAN</span></a></nobr></div>
+<div><nobr><a href="#" onClick="return NodeClick('6')"><img id="imgn6" src="icons/tplus.gif" class="p"></a><a href="topics/SOP_PEMASARAN_DAN_PENGEMBANGAN_BISNIS.htm" onclick="return LinkClick('6',true,true)" onDblClick="return LinkDblClick('6')" target="content" title="SOP PEMASARAN DAN PENGEMBANGAN BISNIS" onmousemove="window.status='SOP PEMASARAN DAN PENGEMBANGAN BISNIS'"><img id="img6" src="icons/1.gif" class="p"> <span id="l6" class="unselected">SOP PEMASARAN DAN PENGEMBANGAN BISNIS</span></a></nobr></div>
+<div id="d6" style="display:none"><div><nobr><img src="icons/line.gif" class="p"><a href="#" onClick="return NodeClick('7')"><img id="imgn7" src="icons/tplus.gif" class="p"></a><a href="topics/PO-MRK-01_Prosedur_Marketing_Plan.htm" onclick="return LinkClick('7',true,true)" onDblClick="return LinkDblClick('7')" target="content" title="PO-MRK-01- Prosedur Marketing Plan" onmousemove="window.status='PO-MRK-01- Prosedur Marketing Plan'"><img id="img7" src="icons/1.gif" class="p"> <span id="l7" class="unselected">PO-MRK-01- Prosedur Marketing Plan</span></a></nobr></div>
+<div id="d7" style="display:none"><div><nobr><img src="icons/line.gif" class="p"><img src="icons/line.gif" class="p"><a href="#" onClick="return NodeClick('8')"><img id="imgn8" src="icons/uaplus.gif" class="p"></a><a href="topics/PO-MRK-01_Form_dan_Contoh.htm" onclick="return LinkClick('8',true,true)" onDblClick="return LinkDblClick('8')" target="content" title="01. Form dan Contoh" onmousemove="window.status='01. Form dan Contoh'"><img id="img8" src="icons/1.gif" class="p"> <span id="l8" class="unselected">01. Form dan Contoh</span></a></nobr></div>
+<div id="d8" style="display:none"><div><nobr><img src="icons/line.gif" class="p"><img src="icons/line.gif" class="p"><img src="icons/blank.gif" class="p"><img src="icons/tshaped.gif" class="p"><a href="topics/PO-MRK-01_FM-MKT-01-01_Marketing_Plan.htm" onclick="return LinkClick('9',false,true)" target="content" title="01. FM-MKT-01-01 Marketing Plan" onmousemove="window.status='01. FM-MKT-01-01 Marketing Plan'"><img src="icons/11.gif" class="p"> <span id="l9" class="unselected">01. FM-MKT-01-01 Marketing Plan</span></a></nobr></div>
+<div><nobr><img src="icons/line.gif" class="p"><img src="icons/line.gif" class="p"><img src="icons/blank.gif" class="p"><img src="icons/upangle.gif" class="p"><a href="topics/PO-MRK-01_FM-MRK-01-01_Prospek_Marketing.htm" onclick="return LinkClick('10',false,true)" target="content" title="02. FM-MRK-01-01 Prospek Marketing" onmousemove="window.status='02. FM-MRK-01-01 Prospek Marketing'"><img src="icons/11.gif" class="p"> <span id="l10" class="unselected">02. FM-MRK-01-01 Prospek Marketing</span></a></nobr></div>
+</div></div><div><nobr><img src="icons/line.gif" class="p"><a href="#" onClick="return NodeClick('11')"><img id="imgn11" src="icons/tplus.gif" class="p"></a><a href="topics/PO-MRK-02_Prosedur_Pencarian_dan_Rekrutmen_Client.htm" onclick="return LinkClick('11',true,true)" onDblClick="return LinkDblClick('11')" target="content" title="PO-MRK-02 - Prosedur Pencarian dan Rekrutmen Client" onmousemove="window.status='PO-MRK-02 - Prosedur Pencarian dan Rekrutmen Client'"><img id="img11" src="icons/1.gif" class="p"> <span id="l11" class="unselected">PO-MRK-02 - Prosedur Pencarian dan Rekrutmen Client</span></a></nobr></div>
+<div id="d11" style="display:none"><div><nobr><img src="icons/line.gif" class="p"><img src="icons/line.gif" class="p"><a href="#" onClick="return NodeClick('12')"><img id="imgn12" src="icons/uaplus.gif" class="p"></a><a href="topics/PO-MRK-02_Form_dan_Contoh.htm" onclick="return LinkClick('12',true,true)" onDblClick="return LinkDblClick('12')" target="content" title="01. Form dan Contoh" onmousemove="window.status='01. Form dan Contoh'"><img id="img12" src="icons/1.gif" class="p"> <span id="l12" class="unselected">01. Form dan Contoh</span></a></nobr></div>
+<div id="d12" style="display:none"><div><nobr><img src="icons/line.gif" class="p"><img src="icons/line.gif" class="p"><img src="icons/blank.gif" class="p"><img src="icons/tshaped.gif" class="p"><a href="topics/PO-MRK-02_01_SP-MRK-01-01_Standar_Kriteria_Informasi_Proyek.htm" onclick="return LinkClick('13',false,true)" target="content" title="01. SP-MRK-01-01 Standar Kriteria Informasi Proyek" onmousemove="window.status='01. SP-MRK-01-01 Standar Kriteria Informasi Proyek'"><img src="icons/11.gif" class="p"> <span id="l13" class="unselected">01. SP-MRK-01-01 Standar Kriteria Informasi Proyek</span></a></nobr></div>
+<div><nobr><img src="icons/line.gif" class="p"><img src="icons/line.gif" class="p"><img src="icons/blank.gif" class="p"><img src="icons/tshaped.gif" class="p"><a href="topics/PO-MRK-02_02_FM-MRK-02-02_Lap_Kegiatan_Pencairan_Proyek.htm" onclick="return LinkClick('14',false,true)" target="content" title="02. FM-MRK-02-02 Lap Kegiatan Pencairan Proyek" onmousemove="window.status='02. FM-MRK-02-02 Lap Kegiatan Pencairan Proyek'"><img src="icons/11.gif" class="p"> <span id="l14" class="unselected">02. FM-MRK-02-02 Lap Kegiatan Pencairan Proyek</span></a></nobr></div>
+<div><nobr><img src="icons/line.gif" class="p"><img src="icons/line.gif" class="p"><img src="icons/blank.gif" class="p"><img src="icons/upangle.gif" class="p"><a href="topics/PO-MRK-02_03_SP-MRK-03-03_Kriteria_Informasi_Proyek.htm" onclick="return LinkClick('15',false,true)" target="content" title="03. SP-MRK-03-03 Kriteria Informasi Proyek" onmousemove="window.status='03. SP-MRK-03-03 Kriteria Informasi Proyek'"><img src="icons/11.gif" class="p"> <span id="l15" class="unselected">03. SP-MRK-03-03 Kriteria Informasi Proyek</span></a></nobr></div>
+</div></div><div><nobr><img src="icons/line.gif" class="p"><a href="#" onClick="return NodeClick('16')"><img id="imgn16" src="icons/tplus.gif" class="p"></a><a href="topics/PO-MRK-03_Prosedur_Penanganan_Order.htm" onclick="return LinkClick('16',true,true)" onDblClick="return LinkDblClick('16')" target="content" title="PO-MRK-03 - Prosedur Penanganan Order" onmousemove="window.status='PO-MRK-03 - Prosedur Penanganan Order'"><img id="img16" src="icons/1.gif" class="p"> <span id="l16" class="unselected">PO-MRK-03 - Prosedur Penanganan Order</span></a></nobr></div>
+<div id="d16" style="display:none"><div><nobr><img src="icons/line.gif" class="p"><img src="icons/line.gif" class="p"><img src="icons/tshaped.gif" class="p"><a href="topics/PO-MRK-03_01_Phase_Pree_Sale_Proyek_Swasta.htm" onclick="return LinkClick('17',false,true)" target="content" title="01. SOP-MRK 03-Phase Pre Sale Proyek Swasta" onmousemove="window.status='01. SOP-MRK 03-Phase Pre Sale Proyek Swasta'"><img src="icons/11.gif" class="p"> <span id="l17" class="unselected">01. SOP-MRK 03-Phase Pre Sale Proyek Swasta</span></a></nobr></div>
+<div><nobr><img src="icons/line.gif" class="p"><img src="icons/line.gif" class="p"><img src="icons/tshaped.gif" class="p"><a href="topics/PO-MRK-03_02_Phase_Perencanaan_Budget_Proyek_Pemerintah.htm" onclick="return LinkClick('18',false,true)" target="content" title="02. SOP-MRK 03-Phase Perencanaan Budget Proyek Pemerintah" onmousemove="window.status='02. SOP-MRK 03-Phase Perencanaan Budget Proyek Pemerintah'"><img src="icons/11.gif" class="p"> <span id="l18" class="unselected">02. SOP-MRK 03-Phase Perencanaan Budget Proyek Pemerintah</span></a></nobr></div>
+<div><nobr><img src="icons/line.gif" class="p"><img src="icons/line.gif" class="p"><img src="icons/tshaped.gif" class="p"><a href="topics/PO-MRK-03_03_Phase_Perencanaan_Budget_Proyek_Swasta.htm" onclick="return LinkClick('19',false,true)" target="content" title="03. SOP-MRK 03-Phase Perencanaan Budget Proyek Swasta" onmousemove="window.status='03. SOP-MRK 03-Phase Perencanaan Budget Proyek Swasta'"><img src="icons/11.gif" class="p"> <span id="l19" class="unselected">03. SOP-MRK 03-Phase Perencanaan Budget Proyek Swasta</span></a></nobr></div>
+<div><nobr><img src="icons/line.gif" class="p"><img src="icons/line.gif" class="p"><a href="#" onClick="return NodeClick('20')"><img id="imgn20" src="icons/uaplus.gif" class="p"></a><a href="topics/PO-MRK-03_04_Form_dan_Contoh.htm" onclick="return LinkClick('20',true,true)" onDblClick="return LinkDblClick('20')" target="content" title="04. Form dan Contoh" onmousemove="window.status='04. Form dan Contoh'"><img id="img20" src="icons/1.gif" class="p"> <span id="l20" class="unselected">04. Form dan Contoh</span></a></nobr></div>
+<div id="d20" style="display:none"><div><nobr><img src="icons/line.gif" class="p"><img src="icons/line.gif" class="p"><img src="icons/blank.gif" class="p"><img src="icons/tshaped.gif" class="p"><a href="topics/PO-MRK-03_04_01._Form_SDP-1.htm" onclick="return LinkClick('21',false,true)" target="content" title="04.1. 01. Form SDP-1" onmousemove="window.status='04.1. 01. Form SDP-1'"><img src="icons/11.gif" class="p"> <span id="l21" class="unselected">04.1. 01. Form SDP-1</span></a></nobr></div>
+<div><nobr><img src="icons/line.gif" class="p"><img src="icons/line.gif" class="p"><img src="icons/blank.gif" class="p"><img src="icons/tshaped.gif" class="p"><a href="topics/PO-MRK-03_04_02._Format_SDP-1.htm" onclick="return LinkClick('22',false,true)" target="content" title="04.2. Format SDP-1" onmousemove="window.status='04.2. Format SDP-1'"><img src="icons/11.gif" class="p"> <span id="l22" class="unselected">04.2. Format SDP-1</span></a></nobr></div>
+<div><nobr><img src="icons/line.gif" class="p"><img src="icons/line.gif" class="p"><img src="icons/blank.gif" class="p"><img src="icons/tshaped.gif" class="p"><a href="topics/PO-MRK-03_04_03._Form_Checklist_Adm_Pemerintah.htm" onclick="return LinkClick('23',false,true)" target="content" title="04.3. 02. Form Checklist Adm Pemerintah" onmousemove="window.status='04.3. 02. Form Checklist Adm Pemerintah'"><img src="icons/11.gif" class="p"> <span id="l23" class="unselected">04.3. 02. Form Checklist Adm Pemerintah</span></a></nobr></div>
+<div><nobr><img src="icons/line.gif" class="p"><img src="icons/line.gif" class="p"><img src="icons/blank.gif" class="p"><img src="icons/upangle.gif" class="p"><a href="topics/PO-MRK-03_04_04_Format_SDP_-_2.htm" onclick="return LinkClick('24',false,true)" target="content" title="04.4. Format SDP - 2" onmousemove="window.status='04.4. Format SDP - 2'"><img src="icons/11.gif" class="p"> <span id="l24" class="unselected">04.4. Format SDP - 2</span></a></nobr></div>
+</div></div><div><nobr><img src="icons/line.gif" class="p"><a href="#" onClick="return NodeClick('25')"><img id="imgn25" src="icons/tplus.gif" class="p"></a><a href="topics/PO-MRK-04_Pengajuan_Dokumen_Tender.htm" onclick="return LinkClick('25',true,true)" onDblClick="return LinkDblClick('25')" target="content" title="PO-MRK-04 - Pengajuan Dokumen Tender" onmousemove="window.status='PO-MRK-04 - Pengajuan Dokumen Tender'"><img id="img25" src="icons/1.gif" class="p"> <span id="l25" class="unselected">PO-MRK-04 - Pengajuan Dokumen Tender</span></a></nobr></div>
+<div id="d25" style="display:none"><div><nobr><img src="icons/line.gif" class="p"><img src="icons/line.gif" class="p"><img src="icons/tshaped.gif" class="p"><a href="topics/PO-MRK-04_01_Pengajuan_Dokumen_Tender_Pemerintah.htm" onclick="return LinkClick('26',false,true)" target="content" title="01. Pengajuan Dokumen Tender Pemerintah" onmousemove="window.status='01. Pengajuan Dokumen Tender Pemerintah'"><img src="icons/11.gif" class="p"> <span id="l26" class="unselected">01. Pengajuan Dokumen Tender Pemerintah</span></a></nobr></div>
+<div><nobr><img src="icons/line.gif" class="p"><img src="icons/line.gif" class="p"><img src="icons/tshaped.gif" class="p"><a href="topics/PO-MRK-04_02_Pengajuan_Dokumen_Tender_Swasta.htm" onclick="return LinkClick('27',false,true)" target="content" title="02. Pengajuan Dokumen Tender Swasta" onmousemove="window.status='02. Pengajuan Dokumen Tender Swasta'"><img src="icons/11.gif" class="p"> <span id="l27" class="unselected">02. Pengajuan Dokumen Tender Swasta</span></a></nobr></div>
+<div><nobr><img src="icons/line.gif" class="p"><img src="icons/line.gif" class="p"><img src="icons/upangle.gif" class="p"><a href="topics/PO-MRK-04_03_FM-MRK-04-01_Persyaratan_Dokumen_Tender.htm" onclick="return LinkClick('28',false,true)" target="content" title="03. FM-MRK-04-01 Persyaratan Dokumen Tender" onmousemove="window.status='03. FM-MRK-04-01 Persyaratan Dokumen Tender'"><img src="icons/11.gif" class="p"> <span id="l28" class="unselected">03. FM-MRK-04-01 Persyaratan Dokumen Tender</span></a></nobr></div>
+</div><div><nobr><img src="icons/line.gif" class="p"><a href="#" onClick="return NodeClick('29')"><img id="imgn29" src="icons/tplus.gif" class="p"></a><a href="topics/PO-MRK-05_Klarifikasi_dan_Negosiasi_Tender.htm" onclick="return LinkClick('29',true,true)" onDblClick="return LinkDblClick('29')" target="content" title="PO-MRK-05 - Klarifikasi dan Negosiasi Tender" onmousemove="window.status='PO-MRK-05 - Klarifikasi dan Negosiasi Tender'"><img id="img29" src="icons/1.gif" class="p"> <span id="l29" class="unselected">PO-MRK-05 - Klarifikasi dan Negosiasi Tender</span></a></nobr></div>
+<div id="d29" style="display:none"><div><nobr><img src="icons/line.gif" class="p"><img src="icons/line.gif" class="p"><img src="icons/tshaped.gif" class="p"><a href="topics/PO-MRK-05_01_Klarifikasi_Negosiasi_Tender_Proyek_Swasta.htm" onclick="return LinkClick('30',false,true)" target="content" title="01. PO-MRK 05-Klarifikasi &amp; Negosiasi Tender Proyek Swasta" onmousemove="window.status='01. PO-MRK 05-Klarifikasi &amp; Negosiasi Tender Proyek Swasta'"><img src="icons/11.gif" class="p"> <span id="l30" class="unselected">01. PO-MRK 05-Klarifikasi &amp; Negosiasi Tender Proyek Swasta</span></a></nobr></div>
+<div><nobr><img src="icons/line.gif" class="p"><img src="icons/line.gif" class="p"><img src="icons/upangle.gif" class="p"><a href="topics/PO-MRK-05_02_Klarifikasi_Negosiasi_Tender_Proyek_Pemerintah.htm" onclick="return LinkClick('31',false,true)" target="content" title="02. PO-MRK 05-Klarifikasi &amp; Negosiasi Tender Proyek Pemerintah" onmousemove="window.status='02. PO-MRK 05-Klarifikasi &amp; Negosiasi Tender Proyek Pemerintah'"><img src="icons/11.gif" class="p"> <span id="l31" class="unselected">02. PO-MRK 05-Klarifikasi &amp; Negosiasi Tender Proyek Pemerintah</span></a></nobr></div>
+</div><div><nobr><img src="icons/line.gif" class="p"><a href="#" onClick="return NodeClick('32')"><img id="imgn32" src="icons/tplus.gif" class="p"></a><a href="topics/PO-MRK-06_Kesepakatan_Dokumen_Kontrak.htm" onclick="return LinkClick('32',true,true)" onDblClick="return LinkDblClick('32')" target="content" title="PO-MRK-06 - Kesepakatan Dokumen Kontrak" onmousemove="window.status='PO-MRK-06 - Kesepakatan Dokumen Kontrak'"><img id="img32" src="icons/1.gif" class="p"> <span id="l32" class="unselected">PO-MRK-06 - Kesepakatan Dokumen Kontrak</span></a></nobr></div>
+<div id="d32" style="display:none"><div><nobr><img src="icons/line.gif" class="p"><img src="icons/line.gif" class="p"><img src="icons/tshaped.gif" class="p"><a href="topics/PO-MRK-06_01_Kesepakatan_Dokumen_Kontrak_Pemerintah.htm" onclick="return LinkClick('33',false,true)" target="content" title="01. SOP-Mrk 06-Kesepakatan Dokumen Kontrak Pemerintah" onmousemove="window.status='01. SOP-Mrk 06-Kesepakatan Dokumen Kontrak Pemerintah'"><img src="icons/11.gif" class="p"> <span id="l33" class="unselected">01. SOP-Mrk 06-Kesepakatan Dokumen Kontrak Pemerintah</span></a></nobr></div>
+<div><nobr><img src="icons/line.gif" class="p"><img src="icons/line.gif" class="p"><img src="icons/tshaped.gif" class="p"><a href="topics/PO-MRK-06_02_Kesepakatan_Dokumen_Kontrak_Proyek_Swasta_Oleh_Perseroan.htm" onclick="return LinkClick('34',false,true)" target="content" title="02. SOP-Mrk 06-Kesepakatan Dokumen Kontrak Proyek Swasta Oleh Perseroan" onmousemove="window.status='02. SOP-Mrk 06-Kesepakatan Dokumen Kontrak Proyek Swasta Oleh Perseroan'"><img src="icons/11.gif" class="p"> <span id="l34" class="unselected">02. SOP-Mrk 06-Kesepakatan Dokumen Kontrak Proyek Swasta Oleh Perseroan</span></a></nobr></div>
+<div><nobr><img src="icons/line.gif" class="p"><img src="icons/line.gif" class="p"><a href="#" onClick="return NodeClick('35')"><img id="imgn35" src="icons/uaplus.gif" class="p"></a><a href="topics/PO-MRK-06_Form_dan_Contoh.htm" onclick="return LinkClick('35',true,true)" onDblClick="return LinkDblClick('35')" target="content" title="03. Form dan Contoh" onmousemove="window.status='03. Form dan Contoh'"><img id="img35" src="icons/1.gif" class="p"> <span id="l35" class="unselected">03. Form dan Contoh</span></a></nobr></div>
+<div id="d35" style="display:none"><div><nobr><img src="icons/line.gif" class="p"><img src="icons/line.gif" class="p"><img src="icons/blank.gif" class="p"><img src="icons/tshaped.gif" class="p"><a href="topics/PO-MRK-06_03_01_SDP_3_(SP-MRK-05-01).htm" onclick="return LinkClick('36',false,true)" target="content" title="03.1. SDP 3 (SP-MRK-05-01)" onmousemove="window.status='03.1. SDP 3 (SP-MRK-05-01)'"><img src="icons/11.gif" class="p"> <span id="l36" class="unselected">03.1. SDP 3 (SP-MRK-05-01)</span></a></nobr></div>
+<div><nobr><img src="icons/line.gif" class="p"><img src="icons/line.gif" class="p"><img src="icons/blank.gif" class="p"><img src="icons/upangle.gif" class="p"><a href="topics/PO-MRK-06_03_02_SP-MRK-05-01_Spesifikasi_Kontrak.htm" onclick="return LinkClick('37',false,true)" target="content" title="03.2. SP-MRK-05-01 Spesifikasi Kontrak" onmousemove="window.status='03.2. SP-MRK-05-01 Spesifikasi Kontrak'"><img src="icons/11.gif" class="p"> <span id="l37" class="unselected">03.2. SP-MRK-05-01 Spesifikasi Kontrak</span></a></nobr></div>
+</div></div><div><nobr><img src="icons/line.gif" class="p"><img src="icons/tshaped.gif" class="p"><a href="topics/PO-MRK-07_Evaluasi_Success_Ratio.htm" onclick="return LinkClick('38',false,true)" target="content" title="PO-MRK-07 - Evaluasi Success Ratio" onmousemove="window.status='PO-MRK-07 - Evaluasi Success Ratio'"><img src="icons/11.gif" class="p"> <span id="l38" class="unselected">PO-MRK-07 - Evaluasi Success Ratio</span></a></nobr></div>
+<div><nobr><img src="icons/line.gif" class="p"><a href="#" onClick="return NodeClick('39')"><img id="imgn39" src="icons/tplus.gif" class="p"></a><a href="topics/PO-MRK-08_Pengukuran_Kepuasan_Pelanggan.htm" onclick="return LinkClick('39',true,true)" onDblClick="return LinkDblClick('39')" target="content" title="PO-MRK-08 - Pengukuran Kepuasan Pelanggan" onmousemove="window.status='PO-MRK-08 - Pengukuran Kepuasan Pelanggan'"><img id="img39" src="icons/1.gif" class="p"> <span id="l39" class="unselected">PO-MRK-08 - Pengukuran Kepuasan Pelanggan</span></a></nobr></div>
+<div id="d39" style="display:none"><div><nobr><img src="icons/line.gif" class="p"><img src="icons/line.gif" class="p"><a href="#" onClick="return NodeClick('40')"><img id="imgn40" src="icons/uaplus.gif" class="p"></a><a href="topics/PO-MRK-08_Form_dan_Contoh.htm" onclick="return LinkClick('40',true,true)" onDblClick="return LinkDblClick('40')" target="content" title="01. Form dan Contoh" onmousemove="window.status='01. Form dan Contoh'"><img id="img40" src="icons/1.gif" class="p"> <span id="l40" class="unselected">01. Form dan Contoh</span></a></nobr></div>
+<div id="d40" style="display:none"><div><nobr><img src="icons/line.gif" class="p"><img src="icons/line.gif" class="p"><img src="icons/blank.gif" class="p"><img src="icons/tshaped.gif" class="p"><a href="topics/PO-MRK-08_01_FM-MRK-08-01_Kepuasan_Pelangan.htm" onclick="return LinkClick('41',false,true)" target="content" title="01.1. FM-MRK-08-01 Kepuasan Pelanggan" onmousemove="window.status='01.1. FM-MRK-08-01 Kepuasan Pelanggan'"><img src="icons/11.gif" class="p"> <span id="l41" class="unselected">01.1. FM-MRK-08-01 Kepuasan Pelanggan</span></a></nobr></div>
+<div><nobr><img src="icons/line.gif" class="p"><img src="icons/line.gif" class="p"><img src="icons/blank.gif" class="p"><img src="icons/upangle.gif" class="p"><a href="topics/PO-MRK-08_01_FM-MRK-08-02_Form_Wawancara.htm" onclick="return LinkClick('42',false,true)" target="content" title="01.2. FM-MRK-08-02 Form Wawancara" onmousemove="window.status='01.2. FM-MRK-08-02 Form Wawancara'"><img src="icons/11.gif" class="p"> <span id="l42" class="unselected">01.2. FM-MRK-08-02 Form Wawancara</span></a></nobr></div>
+</div></div><div><nobr><img src="icons/line.gif" class="p"><img src="icons/tshaped.gif" class="p"><a href="topics/PO-MRK-09_Marketing_Komunikasi.htm" onclick="return LinkClick('43',false,true)" target="content" title="PO-MRK-09 - Marketing Komunikasi" onmousemove="window.status='PO-MRK-09 - Marketing Komunikasi'"><img src="icons/11.gif" class="p"> <span id="l43" class="unselected">PO-MRK-09 - Marketing Komunikasi</span></a></nobr></div>
+<div><nobr><img src="icons/line.gif" class="p"><img src="icons/upangle.gif" class="p"><a href="topics/PO-MRK-10_Pengajuan_Pengalaman_Kerja_Personel.htm" onclick="return LinkClick('44',false,true)" target="content" title="PO-MRK-10 - Pengajuan Pengalaman Kerja Personel" onmousemove="window.status='PO-MRK-10 - Pengajuan Pengalaman Kerja Personel'"><img src="icons/11.gif" class="p"> <span id="l44" class="unselected">PO-MRK-10 - Pengajuan Pengalaman Kerja Personel</span></a></nobr></div>
+</div><div><nobr><a href="#" onClick="return NodeClick('45')"><img id="imgn45" src="icons/tplus.gif" class="p"></a><a href="topics/SOP_PRODUKSI.htm" onclick="return LinkClick('45',true,true)" onDblClick="return LinkDblClick('45')" target="content" title="SOP PRODUKSI" onmousemove="window.status='SOP PRODUKSI'"><img id="img45" src="icons/1.gif" class="p"> <span id="l45" class="unselected">SOP PRODUKSI</span></a></nobr></div>
+<div id="d45" style="display:none"><div><nobr><img src="icons/line.gif" class="p"><img src="icons/tshaped.gif" class="p"><a href="topics/SOP-PRO-01_SOP_PERENCANAAN_HARGA_POKOK_PRODUKSI_(HPP).htm" onclick="return LinkClick('46',false,true)" target="content" title="SOP-PRO-01 - HARGA POKOK PRODUKSI (HPP)" onmousemove="window.status='SOP-PRO-01 - HARGA POKOK PRODUKSI (HPP)'"><img src="icons/11.gif" class="p"> <span id="l46" class="unselected">SOP-PRO-01 - HARGA POKOK PRODUKSI (HPP)</span></a></nobr></div>
+<div><nobr><img src="icons/line.gif" class="p"><a href="#" onClick="return NodeClick('47')"><img id="imgn47" src="icons/tplus.gif" class="p"></a><a href="topics/SOP-PRO-02_SOP_PENANGANAN_ORDER_PRODUKSI_(KAYU_DAN_BAJA.htm" onclick="return LinkClick('47',true,true)" onDblClick="return LinkDblClick('47')" target="content" title="SOP-PRO-02 - PENANGANAN ORDER PRODUKSI" onmousemove="window.status='SOP-PRO-02 - PENANGANAN ORDER PRODUKSI'"><img id="img47" src="icons/1.gif" class="p"> <span id="l47" class="unselected">SOP-PRO-02 - PENANGANAN ORDER PRODUKSI</span></a></nobr></div>
+<div id="d47" style="display:none"><div><nobr><img src="icons/line.gif" class="p"><img src="icons/line.gif" class="p"><a href="#" onClick="return NodeClick('48')"><img id="imgn48" src="icons/tplus.gif" class="p"></a><a href="topics/SOP-PRO-02-01_Dari_Internal_Entitas_Group_(AMP_&_BCP).htm" onclick="return LinkClick('48',true,true)" onDblClick="return LinkDblClick('48')" target="content" title="01. Di Internal Entitas Group" onmousemove="window.status='01. Di Internal Entitas Group'"><img id="img48" src="icons/1.gif" class="p"> <span id="l48" class="unselected">01. Di Internal Entitas Group</span></a></nobr></div>
+<div id="d48" style="display:none"><div><nobr><img src="icons/line.gif" class="p"><img src="icons/line.gif" class="p"><img src="icons/line.gif" class="p"><img src="icons/tshaped.gif" class="p"><a href="topics/SOP-PRO-02-01-1_Penanganan_Order_Produksi_di_Produksi_AMP.htm" onclick="return LinkClick('49',false,true)" target="content" title="01.1. Produksi AMP" onmousemove="window.status='01.1. Produksi AMP'"><img src="icons/11.gif" class="p"> <span id="l49" class="unselected">01.1. Produksi AMP</span></a></nobr></div>
+<div><nobr><img src="icons/line.gif" class="p"><img src="icons/line.gif" class="p"><img src="icons/line.gif" class="p"><img src="icons/tshaped.gif" class="p"><a href="topics/SOP-PRO-02-01-2_Penanganan_Order_Produksi_di_Produksi_Batching_Plant1.htm" onclick="return LinkClick('50',false,true)" target="content" title="01.2. Produksi Batching Plant" onmousemove="window.status='01.2. Produksi Batching Plant'"><img src="icons/11.gif" class="p"> <span id="l50" class="unselected">01.2. Produksi Batching Plant</span></a></nobr></div>
+<div><nobr><img src="icons/line.gif" class="p"><img src="icons/line.gif" class="p"><img src="icons/line.gif" class="p"><img src="icons/tshaped.gif" class="p"><a href="topics/SOP-PRO-02-01-3_Produksi_Kayu_&_Baja.htm" onclick="return LinkClick('51',false,true)" target="content" title="01.3. Produksi Kayu &amp; Baja" onmousemove="window.status='01.3. Produksi Kayu &amp; Baja'"><img src="icons/11.gif" class="p"> <span id="l51" class="unselected">01.3. Produksi Kayu &amp; Baja</span></a></nobr></div>
+<div><nobr><img src="icons/line.gif" class="p"><img src="icons/line.gif" class="p"><img src="icons/line.gif" class="p"><img src="icons/upangle.gif" class="p"><a href="topics/SOP-PRO-02-01-4_Produksi_Batako,_Cansteen,_Precast_dan_Sejenisnya.htm" onclick="return LinkClick('52',false,true)" target="content" title="01.4. Produksi Batako, Cansteen, Precast dan Sejenisnya" onmousemove="window.status='01.4. Produksi Batako, Cansteen, Precast dan Sejenisnya'"><img src="icons/11.gif" class="p"> <span id="l52" class="unselected">01.4. Produksi Batako, Cansteen, Precast dan Sejenisnya</span></a></nobr></div>
+</div><div><nobr><img src="icons/line.gif" class="p"><img src="icons/line.gif" class="p"><a href="#" onClick="return NodeClick('53')"><img id="imgn53" src="icons/tplus.gif" class="p"></a><a href="topics/SOP-PRO-02-02_Dari_Eksternal_Entitas_Group.htm" onclick="return LinkClick('53',true,true)" onDblClick="return LinkDblClick('53')" target="content" title="02. Dari Eksternal Entitas Group" onmousemove="window.status='02. Dari Eksternal Entitas Group'"><img id="img53" src="icons/1.gif" class="p"> <span id="l53" class="unselected">02. Dari Eksternal Entitas Group</span></a></nobr></div>
+<div id="d53" style="display:none"><div><nobr><img src="icons/line.gif" class="p"><img src="icons/line.gif" class="p"><img src="icons/line.gif" class="p"><img src="icons/tshaped.gif" class="p"><a href="topics/SOP-PRO-02-02-1_Produksi_Kayu_dan_Fabrikasi_Baja.htm" onclick="return LinkClick('54',false,true)" target="content" title="02.1. Produksi Kayu dan Fabrikasi Baja" onmousemove="window.status='02.1. Produksi Kayu dan Fabrikasi Baja'"><img src="icons/11.gif" class="p"> <span id="l54" class="unselected">02.1. Produksi Kayu dan Fabrikasi Baja</span></a></nobr></div>
+<div><nobr><img src="icons/line.gif" class="p"><img src="icons/line.gif" class="p"><img src="icons/line.gif" class="p"><img src="icons/upangle.gif" class="p"><a href="topics/SOP-PRO-02-02-2_Produksi_AMP_Batching_Plant.htm" onclick="return LinkClick('55',false,true)" target="content" title="02.2. Produksi AMP &amp; Batching Plant" onmousemove="window.status='02.2. Produksi AMP &amp; Batching Plant'"><img src="icons/11.gif" class="p"> <span id="l55" class="unselected">02.2. Produksi AMP &amp; Batching Plant</span></a></nobr></div>
+</div><div><nobr><img src="icons/line.gif" class="p"><img src="icons/line.gif" class="p"><a href="#" onClick="return NodeClick('56')"><img id="imgn56" src="icons/uaplus.gif" class="p"></a><a href="topics/SOP-PRO-02-03_Form_dan_Contoh.htm" onclick="return LinkClick('56',true,true)" onDblClick="return LinkDblClick('56')" target="content" title="03. Form dan Contoh" onmousemove="window.status='03. Form dan Contoh'"><img id="img56" src="icons/1.gif" class="p"> <span id="l56" class="unselected">03. Form dan Contoh</span></a></nobr></div>
+<div id="d56" style="display:none"><div><nobr><img src="icons/line.gif" class="p"><img src="icons/line.gif" class="p"><img src="icons/blank.gif" class="p"><img src="icons/tshaped.gif" class="p"><a href="topics/SOP-PRO-02-03-1_FM-SCM-.....-.......)_Stock_Card.htm" onclick="return LinkClick('57',false,true)" target="content" title="03.1. FM-SCM-.....-.......) Stock Card" onmousemove="window.status='03.1. FM-SCM-.....-.......) Stock Card'"><img src="icons/11.gif" class="p"> <span id="l57" class="unselected">03.1. FM-SCM-.....-.......) Stock Card</span></a></nobr></div>
+<div><nobr><img src="icons/line.gif" class="p"><img src="icons/line.gif" class="p"><img src="icons/blank.gif" class="p"><img src="icons/tshaped.gif" class="p"><a href="topics/SOP-PRO-02-03-2_(Contoh)_Permintaan_Material_Stock.htm" onclick="return LinkClick('58',false,true)" target="content" title="03.2. (Contoh) Permintaan Material Stock" onmousemove="window.status='03.2. (Contoh) Permintaan Material Stock'"><img src="icons/11.gif" class="p"> <span id="l58" class="unselected">03.2. (Contoh) Permintaan Material Stock</span></a></nobr></div>
+<div><nobr><img src="icons/line.gif" class="p"><img src="icons/line.gif" class="p"><img src="icons/blank.gif" class="p"><img src="icons/tshaped.gif" class="p"><a href="topics/SOP-PRO-02-03-3_(Contoh)_Schedule_Fabrikasi_Baja.htm" onclick="return LinkClick('59',false,true)" target="content" title="03.3. (Contoh) Schedule Fabrikasi Baja" onmousemove="window.status='03.3. (Contoh) Schedule Fabrikasi Baja'"><img src="icons/11.gif" class="p"> <span id="l59" class="unselected">03.3. (Contoh) Schedule Fabrikasi Baja</span></a></nobr></div>
+<div><nobr><img src="icons/line.gif" class="p"><img src="icons/line.gif" class="p"><img src="icons/blank.gif" class="p"><img src="icons/tshaped.gif" class="p"><a href="topics/SOP-PRO-02-03-4_(Contoh)_Surat_Perintah_Produksi.htm" onclick="return LinkClick('60',false,true)" target="content" title="03.4. (Contoh) Surat Perintah Produksi" onmousemove="window.status='03.4. (Contoh) Surat Perintah Produksi'"><img src="icons/11.gif" class="p"> <span id="l60" class="unselected">03.4. (Contoh) Surat Perintah Produksi</span></a></nobr></div>
+<div><nobr><img src="icons/line.gif" class="p"><img src="icons/line.gif" class="p"><img src="icons/blank.gif" class="p"><img src="icons/upangle.gif" class="p"><a href="topics/SOP-PRO-02-03-5_(Contoh)_Tomber_Procurement_Schedule.htm" onclick="return LinkClick('61',false,true)" target="content" title="03.5 (Contoh) Timber Procurement Schedule" onmousemove="window.status='03.5 (Contoh) Timber Procurement Schedule'"><img src="icons/11.gif" class="p"> <span id="l61" class="unselected">03.5 (Contoh) Timber Procurement Schedule</span></a></nobr></div>
+</div></div><div><nobr><img src="icons/line.gif" class="p"><img src="icons/tshaped.gif" class="p"><a href="topics/SOP-PRO-03_SOP_MUTASI_PERSEDIAAN_DI_PRODUKSI.htm" onclick="return LinkClick('62',false,true)" target="content" title="SOP-PRO-03 - SOP MUTASI PERSEDIAAN DI PRODUKSI" onmousemove="window.status='SOP-PRO-03 - SOP MUTASI PERSEDIAAN DI PRODUKSI'"><img src="icons/11.gif" class="p"> <span id="l62" class="unselected">SOP-PRO-03 - SOP MUTASI PERSEDIAAN DI PRODUKSI</span></a></nobr></div>
+<div><nobr><img src="icons/line.gif" class="p"><a href="#" onClick="return NodeClick('63')"><img id="imgn63" src="icons/tplus.gif" class="p"></a><a href="topics/SOP-PRO-04_SOP_PENANGANAN_BARANG_ATAU_MATERIAL_DI_PRODUKSI.htm" onclick="return LinkClick('63',true,true)" onDblClick="return LinkDblClick('63')" target="content" title="SOP-PRO-04 - SOP PENANGANAN BARANG ATAU MATERIAL DI PRODUKSI" onmousemove="window.status='SOP-PRO-04 - SOP PENANGANAN BARANG ATAU MATERIAL DI PRODUKSI'"><img id="img63" src="icons/1.gif" class="p"> <span id="l63" class="unselected">SOP-PRO-04 - SOP PENANGANAN BARANG ATAU MATERIAL DI PRODUKSI</span></a></nobr></div>
+<div id="d63" style="display:none"><div><nobr><img src="icons/line.gif" class="p"><img src="icons/line.gif" class="p"><a href="#" onClick="return NodeClick('64')"><img id="imgn64" src="icons/tplus.gif" class="p"></a><a href="topics/SOP-PRO-04-01_Penerimaan_Barang_atau_Material_di_Produksi.htm" onclick="return LinkClick('64',true,true)" onDblClick="return LinkDblClick('64')" target="content" title="01. Penerimaan Barang/Material di Produksi" onmousemove="window.status='01. Penerimaan Barang/Material di Produksi'"><img id="img64" src="icons/1.gif" class="p"> <span id="l64" class="unselected">01. Penerimaan Barang/Material di Produksi</span></a></nobr></div>
+<div id="d64" style="display:none"><div><nobr><img src="icons/line.gif" class="p"><img src="icons/line.gif" class="p"><img src="icons/line.gif" class="p"><a href="#" onClick="return NodeClick('65')"><img id="imgn65" src="icons/uaplus.gif" class="p"></a><a href="topics/SOP-PRO-04-01-1_Form_dan_Contoh.htm" onclick="return LinkClick('65',true,true)" onDblClick="return LinkDblClick('65')" target="content" title="01.1. Form dan Contoh" onmousemove="window.status='01.1. Form dan Contoh'"><img id="img65" src="icons/1.gif" class="p"> <span id="l65" class="unselected">01.1. Form dan Contoh</span></a></nobr></div>
+<div id="d65" style="display:none"><div><nobr><img src="icons/line.gif" class="p"><img src="icons/line.gif" class="p"><img src="icons/line.gif" class="p"><img src="icons/blank.gif" class="p"><img src="icons/tshaped.gif" class="p"><a href="topics/SOP-PRO-04-01-1-1_FM-SCM-_......-......_)_Purchase_Order.htm" onclick="return LinkClick('66',false,true)" target="content" title="01.1.1. FM-SCM- ......-...... ) Purchase Order" onmousemove="window.status='01.1.1. FM-SCM- ......-...... ) Purchase Order'"><img src="icons/11.gif" class="p"> <span id="l66" class="unselected">01.1.1. FM-SCM- ......-...... ) Purchase Order</span></a></nobr></div>
+<div><nobr><img src="icons/line.gif" class="p"><img src="icons/line.gif" class="p"><img src="icons/line.gif" class="p"><img src="icons/blank.gif" class="p"><img src="icons/upangle.gif" class="p"><a href="topics/SOP-PRO-04-01-1-2_FM-SCM-.....-.......)_Stock_Card.htm" onclick="return LinkClick('67',false,true)" target="content" title="01.1.2. FM-SCM-.....-.......) Stock Card" onmousemove="window.status='01.1.2. FM-SCM-.....-.......) Stock Card'"><img src="icons/11.gif" class="p"> <span id="l67" class="unselected">01.1.2. FM-SCM-.....-.......) Stock Card</span></a></nobr></div>
+</div></div><div><nobr><img src="icons/line.gif" class="p"><img src="icons/line.gif" class="p"><a href="#" onClick="return NodeClick('68')"><img id="imgn68" src="icons/uaplus.gif" class="p"></a><a href="topics/SOP-PRO-04-02_Permintaan_Barang_Material_Stock.htm" onclick="return LinkClick('68',true,true)" onDblClick="return LinkDblClick('68')" target="content" title="02. Permintaan Barang/Material Stock" onmousemove="window.status='02. Permintaan Barang/Material Stock'"><img id="img68" src="icons/1.gif" class="p"> <span id="l68" class="unselected">02. Permintaan Barang/Material Stock</span></a></nobr></div>
+<div id="d68" style="display:none"><div><nobr><img src="icons/line.gif" class="p"><img src="icons/line.gif" class="p"><img src="icons/blank.gif" class="p"><a href="#" onClick="return NodeClick('69')"><img id="imgn69" src="icons/uaplus.gif" class="p"></a><a href="topics/SOP-PRO-04-02-1_Form_dan_Contoh.htm" onclick="return LinkClick('69',true,true)" onDblClick="return LinkDblClick('69')" target="content" title="02.1. Form dan Contoh" onmousemove="window.status='02.1. Form dan Contoh'"><img id="img69" src="icons/1.gif" class="p"> <span id="l69" class="unselected">02.1. Form dan Contoh</span></a></nobr></div>
+<div id="d69" style="display:none"><div><nobr><img src="icons/line.gif" class="p"><img src="icons/line.gif" class="p"><img src="icons/blank.gif" class="p"><img src="icons/blank.gif" class="p"><img src="icons/tshaped.gif" class="p"><a href="topics/SOP-PRO-04-02-1-1_(FM-TEK-08-02)_Rekapitulasi_Stock_Barang.htm" onclick="return LinkClick('70',false,true)" target="content" title="02.1. (FM-TEK-08-02) Rekapitulasi Stock Barang" onmousemove="window.status='02.1. (FM-TEK-08-02) Rekapitulasi Stock Barang'"><img src="icons/11.gif" class="p"> <span id="l70" class="unselected">02.1. (FM-TEK-08-02) Rekapitulasi Stock Barang</span></a></nobr></div>
+<div><nobr><img src="icons/line.gif" class="p"><img src="icons/line.gif" class="p"><img src="icons/blank.gif" class="p"><img src="icons/blank.gif" class="p"><img src="icons/tshaped.gif" class="p"><a href="topics/SOP-PRO-04-02-1-2_(_Contoh_)_Permintaan_Material_Stock.htm" onclick="return LinkClick('71',false,true)" target="content" title="02.2. (Contoh) Permintaan Material Stock" onmousemove="window.status='02.2. (Contoh) Permintaan Material Stock'"><img src="icons/11.gif" class="p"> <span id="l71" class="unselected">02.2. (Contoh) Permintaan Material Stock</span></a></nobr></div>
+<div><nobr><img src="icons/line.gif" class="p"><img src="icons/line.gif" class="p"><img src="icons/blank.gif" class="p"><img src="icons/blank.gif" class="p"><img src="icons/tshaped.gif" class="p"><a href="topics/SOP-PRO-04-02-1-3_(Contoh)_Schedulle_Fabrikasi_Baja.htm" onclick="return LinkClick('72',false,true)" target="content" title="02.3. (Contoh) Schedulle Fabrikasi Baja" onmousemove="window.status='02.3. (Contoh) Schedulle Fabrikasi Baja'"><img src="icons/11.gif" class="p"> <span id="l72" class="unselected">02.3. (Contoh) Schedulle Fabrikasi Baja</span></a></nobr></div>
+<div><nobr><img src="icons/line.gif" class="p"><img src="icons/line.gif" class="p"><img src="icons/blank.gif" class="p"><img src="icons/blank.gif" class="p"><img src="icons/upangle.gif" class="p"><a href="topics/SOP-PRO-04-02-1-4_(Contoh)_Timber_Procurement_Schedule.htm" onclick="return LinkClick('73',false,true)" target="content" title="02.4. (Contoh) Timber Procurement Schedule" onmousemove="window.status='02.4. (Contoh) Timber Procurement Schedule'"><img src="icons/11.gif" class="p"> <span id="l73" class="unselected">02.4. (Contoh) Timber Procurement Schedule</span></a></nobr></div>
+</div></div></div><div><nobr><img src="icons/line.gif" class="p"><a href="#" onClick="return NodeClick('74')"><img id="imgn74" src="icons/tplus.gif" class="p"></a><a href="topics/SOP-PRO-05_SOP_LAPORAN_DATA_PENGAKUAN_HUTANG_DI_PRODUKSI.htm" onclick="return LinkClick('74',true,true)" onDblClick="return LinkDblClick('74')" target="content" title="SOP-PRO-05 - SOP LAPORAN DATA PENGAKUAN HUTANG DI PRODUKSI" onmousemove="window.status='SOP-PRO-05 - SOP LAPORAN DATA PENGAKUAN HUTANG DI PRODUKSI'"><img id="img74" src="icons/1.gif" class="p"> <span id="l74" class="unselected">SOP-PRO-05 - SOP LAPORAN DATA PENGAKUAN HUTANG DI PRODUKSI</span></a></nobr></div>
+<div id="d74" style="display:none"><div><nobr><img src="icons/line.gif" class="p"><img src="icons/line.gif" class="p"><img src="icons/tshaped.gif" class="p"><a href="topics/SOP-PRO-05-01_Penerimaan_Barang_&_Material_di_Produksi.htm" onclick="return LinkClick('75',false,true)" target="content" title="01. Penerimaan Barang/Material di Produksi" onmousemove="window.status='01. Penerimaan Barang/Material di Produksi'"><img src="icons/11.gif" class="p"> <span id="l75" class="unselected">01. Penerimaan Barang/Material di Produksi</span></a></nobr></div>
+<div><nobr><img src="icons/line.gif" class="p"><img src="icons/line.gif" class="p"><img src="icons/tshaped.gif" class="p"><a href="topics/SOP-PRO-05-02_Pembelian_Cash_di_Produksi.htm" onclick="return LinkClick('76',false,true)" target="content" title="02. Pembelian Cash di Produksi" onmousemove="window.status='02. Pembelian Cash di Produksi'"><img src="icons/11.gif" class="p"> <span id="l76" class="unselected">02. Pembelian Cash di Produksi</span></a></nobr></div>
+<div><nobr><img src="icons/line.gif" class="p"><img src="icons/line.gif" class="p"><img src="icons/tshaped.gif" class="p"><a href="topics/SOP-PRO-05-03_Contract_Invoice.htm" onclick="return LinkClick('77',false,true)" target="content" title="03. Contract Invoice" onmousemove="window.status='03. Contract Invoice'"><img src="icons/11.gif" class="p"> <span id="l77" class="unselected">03. Contract Invoice</span></a></nobr></div>
+<div><nobr><img src="icons/line.gif" class="p"><img src="icons/line.gif" class="p"><img src="icons/upangle.gif" class="p"><a href="topics/SOP-PRO-05-04_Sewa_Kontrak.htm" onclick="return LinkClick('78',false,true)" target="content" title="04. Sewa Kontrak" onmousemove="window.status='04. Sewa Kontrak'"><img src="icons/11.gif" class="p"> <span id="l78" class="unselected">04. Sewa Kontrak</span></a></nobr></div>
+</div><div><nobr><img src="icons/line.gif" class="p"><a href="#" onClick="return NodeClick('79')"><img id="imgn79" src="icons/tplus.gif" class="p"></a><a href="topics/SOP-PRO-06_ANALISA_BIAYA_PRODUKSI.htm" onclick="return LinkClick('79',true,true)" onDblClick="return LinkDblClick('79')" target="content" title="SOP-PRO-06 - ANALISA BIAYA PRODUKSI" onmousemove="window.status='SOP-PRO-06 - ANALISA BIAYA PRODUKSI'"><img id="img79" src="icons/1.gif" class="p"> <span id="l79" class="unselected">SOP-PRO-06 - ANALISA BIAYA PRODUKSI</span></a></nobr></div>
+<div id="d79" style="display:none"><div><nobr><img src="icons/line.gif" class="p"><img src="icons/line.gif" class="p"><img src="icons/tshaped.gif" class="p"><a href="topics/SOP-PRO-06_01_Analisa_Biaya_Produksi_(BOP).htm" onclick="return LinkClick('80',false,true)" target="content" title="01. Realisasi Harga Pokok Produksi / HPP" onmousemove="window.status='01. Realisasi Harga Pokok Produksi / HPP'"><img src="icons/11.gif" class="p"> <span id="l80" class="unselected">01. Realisasi Harga Pokok Produksi / HPP</span></a></nobr></div>
+<div><nobr><img src="icons/line.gif" class="p"><img src="icons/line.gif" class="p"><img src="icons/upangle.gif" class="p"><a href="topics/SOP-PRO-06_02_Analisa_Biaya_Produksi_(HPP).htm" onclick="return LinkClick('81',false,true)" target="content" title="02. Realisasi Biaya Operasional Produksi/ BOP" onmousemove="window.status='02. Realisasi Biaya Operasional Produksi/ BOP'"><img src="icons/11.gif" class="p"> <span id="l81" class="unselected">02. Realisasi Biaya Operasional Produksi/ BOP</span></a></nobr></div>
+</div><div><nobr><img src="icons/line.gif" class="p"><a href="#" onClick="return NodeClick('82')"><img id="imgn82" src="icons/tplus.gif" class="p"></a><a href="topics/SOP-PRO-07_SOP_PEMBUATAN_PENGENDALIAN_SCHEDULE_PRODUKSI_KAYU_&_BAJA.htm" onclick="return LinkClick('82',true,true)" onDblClick="return LinkDblClick('82')" target="content" title="SOP-PRO-07 - SOP PEMBUATAN PENGENDALIAN SCHEDULE PRODUKSI KAYU &amp; BAJA" onmousemove="window.status='SOP-PRO-07 - SOP PEMBUATAN PENGENDALIAN SCHEDULE PRODUKSI KAYU &amp; BAJA'"><img id="img82" src="icons/1.gif" class="p"> <span id="l82" class="unselected">SOP-PRO-07 - SOP PEMBUATAN PENGENDALIAN SCHEDULE PRODUKSI KAYU &amp; BAJA</span></a></nobr></div>
+<div id="d82" style="display:none"><div><nobr><img src="icons/line.gif" class="p"><img src="icons/line.gif" class="p"><a href="#" onClick="return NodeClick('83')"><img id="imgn83" src="icons/tplus.gif" class="p"></a><a href="topics/SOP-PRO-07-01_Produksi_Kayu_dan_Baja.htm" onclick="return LinkClick('83',true,true)" onDblClick="return LinkDblClick('83')" target="content" title="01. Produksi Kayu dan Baja" onmousemove="window.status='01. Produksi Kayu dan Baja'"><img id="img83" src="icons/1.gif" class="p"> <span id="l83" class="unselected">01. Produksi Kayu dan Baja</span></a></nobr></div>
+<div id="d83" style="display:none"><div><nobr><img src="icons/line.gif" class="p"><img src="icons/line.gif" class="p"><img src="icons/line.gif" class="p"><img src="icons/upangle.gif" class="p"><a href="topics/SOP-PRO-07-01-1_FM-PRO-07_Schedule_Produksi_Barang_Jadi_(_Contoh_).htm" onclick="return LinkClick('84',false,true)" target="content" title="01.1. FM-PRO-07 Schedule Produksi Barang Jadi ( Contoh )" onmousemove="window.status='01.1. FM-PRO-07 Schedule Produksi Barang Jadi ( Contoh )'"><img src="icons/11.gif" class="p"> <span id="l84" class="unselected">01.1. FM-PRO-07 Schedule Produksi Barang Jadi ( Contoh )</span></a></nobr></div>
+</div><div><nobr><img src="icons/line.gif" class="p"><img src="icons/line.gif" class="p"><a href="#" onClick="return NodeClick('85')"><img id="imgn85" src="icons/uaplus.gif" class="p"></a><a href="topics/SOP-PRO-07-02_Produksi_AMP_&_Bathing_Plant.htm" onclick="return LinkClick('85',true,true)" onDblClick="return LinkDblClick('85')" target="content" title="02. Produksi AMP &amp; Batching Plant" onmousemove="window.status='02. Produksi AMP &amp; Batching Plant'"><img id="img85" src="icons/1.gif" class="p"> <span id="l85" class="unselected">02. Produksi AMP &amp; Batching Plant</span></a></nobr></div>
+<div id="d85" style="display:none"><div><nobr><img src="icons/line.gif" class="p"><img src="icons/line.gif" class="p"><img src="icons/blank.gif" class="p"><img src="icons/tshaped.gif" class="p"><a href="topics/SOP-PRO-07-02-1_(Contoh)_Schedulle_Fabrikasi_Baja.htm" onclick="return LinkClick('86',false,true)" target="content" title="02.1. (Contoh) Schedulle Fabrikasi Baja" onmousemove="window.status='02.1. (Contoh) Schedulle Fabrikasi Baja'"><img src="icons/11.gif" class="p"> <span id="l86" class="unselected">02.1. (Contoh) Schedulle Fabrikasi Baja</span></a></nobr></div>
+<div><nobr><img src="icons/line.gif" class="p"><img src="icons/line.gif" class="p"><img src="icons/blank.gif" class="p"><img src="icons/upangle.gif" class="p"><a href="topics/SOP-PRO-07-02-2_(Contoh)_Timber_Procurement_Schedule.htm" onclick="return LinkClick('87',false,true)" target="content" title="02.2. (Contoh) Timber Procurement Schedule" onmousemove="window.status='02.2. (Contoh) Timber Procurement Schedule'"><img src="icons/11.gif" class="p"> <span id="l87" class="unselected">02.2. (Contoh) Timber Procurement Schedule</span></a></nobr></div>
+</div></div><div><nobr><img src="icons/line.gif" class="p"><a href="#" onClick="return NodeClick('88')"><img id="imgn88" src="icons/tplus.gif" class="p"></a><a href="topics/SOP-PRO-08_SOP_PELAPORAN_KINERJA_PRODUKSI.htm" onclick="return LinkClick('88',true,true)" onDblClick="return LinkDblClick('88')" target="content" title="SOP-PRO-08 - SOP PELAPORAN KINERJA PRODUKSI" onmousemove="window.status='SOP-PRO-08 - SOP PELAPORAN KINERJA PRODUKSI'"><img id="img88" src="icons/1.gif" class="p"> <span id="l88" class="unselected">SOP-PRO-08 - SOP PELAPORAN KINERJA PRODUKSI</span></a></nobr></div>
+<div id="d88" style="display:none"><div><nobr><img src="icons/line.gif" class="p"><img src="icons/line.gif" class="p"><img src="icons/upangle.gif" class="p"><a href="topics/SOP-PRO-08-02_Kinerja_Produksi_(Contoh).htm" onclick="return LinkClick('89',false,true)" target="content" title="01. Kinerja Produksi (Contoh)" onmousemove="window.status='01. Kinerja Produksi (Contoh)'"><img src="icons/11.gif" class="p"> <span id="l89" class="unselected">01. Kinerja Produksi (Contoh)</span></a></nobr></div>
+</div><div><nobr><img src="icons/line.gif" class="p"><a href="#" onClick="return NodeClick('90')"><img id="imgn90" src="icons/tplus.gif" class="p"></a><a href="topics/SOP-PRO-09_SOP_PENGENDALIAN_PRODUK_TIDAK_SESUAI__(DIV_KAYU_&_BAJA.htm" onclick="return LinkClick('90',true,true)" onDblClick="return LinkDblClick('90')" target="content" title="SOP-PRO-09 - SOP PENGENDALIAN PRODUK TIDAK SESUAI  (DIV KAYU &amp; BAJA" onmousemove="window.status='SOP-PRO-09 - SOP PENGENDALIAN PRODUK TIDAK SESUAI  (DIV KAYU &amp; BAJA'"><img id="img90" src="icons/1.gif" class="p"> <span id="l90" class="unselected">SOP-PRO-09 - SOP PENGENDALIAN PRODUK TIDAK SESUAI  (DIV KAYU &amp; BAJA</span></a></nobr></div>
+<div id="d90" style="display:none"><div><nobr><img src="icons/line.gif" class="p"><img src="icons/line.gif" class="p"><a href="#" onClick="return NodeClick('91')"><img id="imgn91" src="icons/tplus.gif" class="p"></a><a href="topics/SOP-PRO-09-01_Produksi_Kayu_dan_Baja.htm" onclick="return LinkClick('91',true,true)" onDblClick="return LinkDblClick('91')" target="content" title="01. Produksi Kayu dan Baja" onmousemove="window.status='01. Produksi Kayu dan Baja'"><img id="img91" src="icons/1.gif" class="p"> <span id="l91" class="unselected">01. Produksi Kayu dan Baja</span></a></nobr></div>
+<div id="d91" style="display:none"><div><nobr><img src="icons/line.gif" class="p"><img src="icons/line.gif" class="p"><img src="icons/line.gif" class="p"><img src="icons/upangle.gif" class="p"><a href="topics/SOP-PRO-09-01-01_FM-PRJ-09-01_Deffect_List.htm" onclick="return LinkClick('92',false,true)" target="content" title="01.1. FM-PRJ-09-01 Deffect List" onmousemove="window.status='01.1. FM-PRJ-09-01 Deffect List'"><img src="icons/11.gif" class="p"> <span id="l92" class="unselected">01.1. FM-PRJ-09-01 Deffect List</span></a></nobr></div>
+</div><div><nobr><img src="icons/line.gif" class="p"><img src="icons/line.gif" class="p"><a href="#" onClick="return NodeClick('93')"><img id="imgn93" src="icons/uaplus.gif" class="p"></a><a href="topics/SOP-PRO-09-02_Produksi_Aspalt_dan_atau_Batching_Plant.htm" onclick="return LinkClick('93',true,true)" onDblClick="return LinkDblClick('93')" target="content" title="02. Produksi Aspalt dan/atau Batching Plant" onmousemove="window.status='02. Produksi Aspalt dan/atau Batching Plant'"><img id="img93" src="icons/1.gif" class="p"> <span id="l93" class="unselected">02. Produksi Aspalt dan/atau Batching Plant</span></a></nobr></div>
+<div id="d93" style="display:none"><div><nobr><img src="icons/line.gif" class="p"><img src="icons/line.gif" class="p"><img src="icons/blank.gif" class="p"><img src="icons/upangle.gif" class="p"><a href="topics/SOP-PRO-09-02.1._FM-PRJ-09-01_Deffect_List.htm" onclick="return LinkClick('94',false,true)" target="content" title="02.1. FM-PRJ-09-01 Deffect List" onmousemove="window.status='02.1. FM-PRJ-09-01 Deffect List'"><img src="icons/11.gif" class="p"> <span id="l94" class="unselected">02.1. FM-PRJ-09-01 Deffect List</span></a></nobr></div>
+</div></div><div><nobr><img src="icons/line.gif" class="p"><a href="#" onClick="return NodeClick('95')"><img id="imgn95" src="icons/uaplus.gif" class="p"></a><a href="topics/SOP-PRO-10_SOP_PEMELIHARAAN_DAN_PERBAIKAN_ALAT_PRODUKSI_KAYU_&_BAJA.htm" onclick="return LinkClick('95',true,true)" onDblClick="return LinkDblClick('95')" target="content" title="SOP-PRO-10 - SOP PEMELIHARAAN DAN PERBAIKAN ALAT PRODUKSI KAYU &amp; BAJA" onmousemove="window.status='SOP-PRO-10 - SOP PEMELIHARAAN DAN PERBAIKAN ALAT PRODUKSI KAYU &amp; BAJA'"><img id="img95" src="icons/1.gif" class="p"> <span id="l95" class="unselected">SOP-PRO-10 - SOP PEMELIHARAAN DAN PERBAIKAN ALAT PRODUKSI KAYU &amp; BAJA</span></a></nobr></div>
+<div id="d95" style="display:none"><div><nobr><img src="icons/line.gif" class="p"><img src="icons/blank.gif" class="p"><a href="#" onClick="return NodeClick('96')"><img id="imgn96" src="icons/tplus.gif" class="p"></a><a href="topics/SOP-PRO-10-01_Pemeliharaan_dan_Perbaikan_Alat_di_Produksi_AMP_&_Batching_Plant.htm" onclick="return LinkClick('96',true,true)" onDblClick="return LinkDblClick('96')" target="content" title="01. Pemeliharaan di Produksi AMP &amp; Batching Plant" onmousemove="window.status='01. Pemeliharaan di Produksi AMP &amp; Batching Plant'"><img id="img96" src="icons/1.gif" class="p"> <span id="l96" class="unselected">01. Pemeliharaan di Produksi AMP &amp; Batching Plant</span></a></nobr></div>
+<div id="d96" style="display:none"><div><nobr><img src="icons/line.gif" class="p"><img src="icons/blank.gif" class="p"><img src="icons/line.gif" class="p"><img src="icons/tshaped.gif" class="p"><a href="topics/SOP-PRO-10-01-1_(FM-AMP-10-01)_Daftar_Induk_Alat_Div._AMP.htm" onclick="return LinkClick('97',false,true)" target="content" title="01.1. (FM-AMP-10-01) Daftar Induk Alat Div. AMP" onmousemove="window.status='01.1. (FM-AMP-10-01) Daftar Induk Alat Div. AMP'"><img src="icons/11.gif" class="p"> <span id="l97" class="unselected">01.1. (FM-AMP-10-01) Daftar Induk Alat Div. AMP</span></a></nobr></div>
+<div><nobr><img src="icons/line.gif" class="p"><img src="icons/blank.gif" class="p"><img src="icons/line.gif" class="p"><img src="icons/tshaped.gif" class="p"><a href="topics/SOP-PRO-10-01-2_(FM-AMP-10-02)_Schedulle_Pemeliharaan_Alat_Periodik.htm" onclick="return LinkClick('98',false,true)" target="content" title="01.2. (FM-AMP-10-02) Schedulle Pemeliharaan Alat Periodik" onmousemove="window.status='01.2. (FM-AMP-10-02) Schedulle Pemeliharaan Alat Periodik'"><img src="icons/11.gif" class="p"> <span id="l98" class="unselected">01.2. (FM-AMP-10-02) Schedulle Pemeliharaan Alat Periodik</span></a></nobr></div>
+<div><nobr><img src="icons/line.gif" class="p"><img src="icons/blank.gif" class="p"><img src="icons/line.gif" class="p"><img src="icons/upangle.gif" class="p"><a href="topics/SOP-PRO-10-01-3_(Form_Contoh)_Spesifikasi_Pemeliharaan_Alat.htm" onclick="return LinkClick('99',false,true)" target="content" title="01.3. (Form Contoh) Spesifikasi Pemeliharaan Alat" onmousemove="window.status='01.3. (Form Contoh) Spesifikasi Pemeliharaan Alat'"><img src="icons/11.gif" class="p"> <span id="l99" class="unselected">01.3. (Form Contoh) Spesifikasi Pemeliharaan Alat</span></a></nobr></div>
+</div><div><nobr><img src="icons/line.gif" class="p"><img src="icons/blank.gif" class="p"><a href="#" onClick="return NodeClick('100')"><img id="imgn100" src="icons/tplus.gif" class="p"></a><a href="topics/SOP-PRO-10-02_Pemeliharaan_di_Produksi_Kayu_dan_Baja.htm" onclick="return LinkClick('100',true,true)" onDblClick="return LinkDblClick('100')" target="content" title="02. Pemeliharaan di Produksi Kayu dan Baja" onmousemove="window.status='02. Pemeliharaan di Produksi Kayu dan Baja'"><img id="img100" src="icons/1.gif" class="p"> <span id="l100" class="unselected">02. Pemeliharaan di Produksi Kayu dan Baja</span></a></nobr></div>
+<div id="d100" style="display:none"><div><nobr><img src="icons/line.gif" class="p"><img src="icons/blank.gif" class="p"><img src="icons/line.gif" class="p"><img src="icons/tshaped.gif" class="p"><a href="topics/SOP-PRO-10-02-1_(FM-AMP-10-01)_Daftar_Induk_Alat_Kayu_dan_Baja.htm" onclick="return LinkClick('101',false,true)" target="content" title="02.1. (FM-AMP-10-01) Daftar Induk Alat Kayu dan Baja" onmousemove="window.status='02.1. (FM-AMP-10-01) Daftar Induk Alat Kayu dan Baja'"><img src="icons/11.gif" class="p"> <span id="l101" class="unselected">02.1. (FM-AMP-10-01) Daftar Induk Alat Kayu dan Baja</span></a></nobr></div>
+<div><nobr><img src="icons/line.gif" class="p"><img src="icons/blank.gif" class="p"><img src="icons/line.gif" class="p"><img src="icons/tshaped.gif" class="p"><a href="topics/SOP-PRO-10-02-2_(FM-AMP-10-02)_Schedulle_Pemeliharaan_Alat_Periodik.htm" onclick="return LinkClick('102',false,true)" target="content" title="02.2. (FM-AMP-10-02) Schedulle Pemeliharaan Alat Periodik" onmousemove="window.status='02.2. (FM-AMP-10-02) Schedulle Pemeliharaan Alat Periodik'"><img src="icons/11.gif" class="p"> <span id="l102" class="unselected">02.2. (FM-AMP-10-02) Schedulle Pemeliharaan Alat Periodik</span></a></nobr></div>
+<div><nobr><img src="icons/line.gif" class="p"><img src="icons/blank.gif" class="p"><img src="icons/line.gif" class="p"><img src="icons/upangle.gif" class="p"><a href="topics/SOP-PRO-10-02-3_(Form_Contoh)_Spesifikasi_Pemeliharaan_Alat.htm" onclick="return LinkClick('103',false,true)" target="content" title="02.3. (Form Contoh) Spesifikasi Pemeliharaan Alat" onmousemove="window.status='02.3. (Form Contoh) Spesifikasi Pemeliharaan Alat'"><img src="icons/11.gif" class="p"> <span id="l103" class="unselected">02.3. (Form Contoh) Spesifikasi Pemeliharaan Alat</span></a></nobr></div>
+</div><div><nobr><img src="icons/line.gif" class="p"><img src="icons/blank.gif" class="p"><img src="icons/upangle.gif" class="p"><a href="topics/SOP-PRO-10-03_Perbaikan_Alat_di_Produksi.htm" onclick="return LinkClick('104',false,true)" target="content" title="03. Perbaikan Alat di Produksi" onmousemove="window.status='03. Perbaikan Alat di Produksi'"><img src="icons/11.gif" class="p"> <span id="l104" class="unselected">03. Perbaikan Alat di Produksi</span></a></nobr></div>
+</div></div><div><nobr><a href="#" onClick="return NodeClick('105')"><img id="imgn105" src="icons/tplus.gif" class="p"></a><a href="topics/13_05_24_SOP_PROYEK.htm" onclick="return LinkClick('105',true,true)" onDblClick="return LinkDblClick('105')" target="content" title="SOP PROYEK" onmousemove="window.status='SOP PROYEK'"><img id="img105" src="icons/1.gif" class="p"> <span id="l105" class="unselected">SOP PROYEK</span></a></nobr></div>
+<div id="d105" style="display:none"><div><nobr><img src="icons/line.gif" class="p"><img src="icons/tshaped.gif" class="p"><a href="topics/SOP-PRJ-01_-_RENCANA_MUTU_PROYEK.htm" onclick="return LinkClick('106',false,true)" target="content" title="SOP-PRJ-01 - RENCANA MUTU PROYEK" onmousemove="window.status='SOP-PRJ-01 - RENCANA MUTU PROYEK'"><img src="icons/11.gif" class="p"> <span id="l106" class="unselected">SOP-PRJ-01 - RENCANA MUTU PROYEK</span></a></nobr></div>
+<div><nobr><img src="icons/line.gif" class="p"><img src="icons/tshaped.gif" class="p"><a href="topics/SOP-PRJ-02_Registrasi_Proyek_dan_Perencanaan_List_Pengendalian_Budget.htm" onclick="return LinkClick('107',false,true)" target="content" title="SOP-PRJ-02 - REGISTRASI PROYEK DAN PERENCANAAN LIST PENGENDALIAN BUDGET" onmousemove="window.status='SOP-PRJ-02 - REGISTRASI PROYEK DAN PERENCANAAN LIST PENGENDALIAN BUDGET'"><img src="icons/11.gif" class="p"> <span id="l107" class="unselected">SOP-PRJ-02 - REGISTRASI PROYEK DAN PERENCANAAN LIST PENGENDALIAN BUDGET</span></a></nobr></div>
+<div><nobr><img src="icons/line.gif" class="p"><a href="#" onClick="return NodeClick('108')"><img id="imgn108" src="icons/tplus.gif" class="p"></a><a href="topics/SOP-PRJ-03_-_PEMBUATAN_DAN_PENGENDALIAN_SCHEDULLE_PROYEK.htm" onclick="return LinkClick('108',true,true)" onDblClick="return LinkDblClick('108')" target="content" title="SOP-PRJ-03 - PEMBUATAN DAN PENGENDALIAN SCHEDULLE PROYEK" onmousemove="window.status='SOP-PRJ-03 - PEMBUATAN DAN PENGENDALIAN SCHEDULLE PROYEK'"><img id="img108" src="icons/1.gif" class="p"> <span id="l108" class="unselected">SOP-PRJ-03 - PEMBUATAN DAN PENGENDALIAN SCHEDULLE PROYEK</span></a></nobr></div>
+<div id="d108" style="display:none"><div><nobr><img src="icons/line.gif" class="p"><img src="icons/line.gif" class="p"><img src="icons/tshaped.gif" class="p"><a href="topics/SOP-PRJ-03_01_Pembuatan_Schedule_Proyek.htm" onclick="return LinkClick('109',false,true)" target="content" title="3.1 Pembuatan Schedule Proyek" onmousemove="window.status='3.1 Pembuatan Schedule Proyek'"><img src="icons/11.gif" class="p"> <span id="l109" class="unselected">3.1 Pembuatan Schedule Proyek</span></a></nobr></div>
+<div><nobr><img src="icons/line.gif" class="p"><img src="icons/line.gif" class="p"><img src="icons/upangle.gif" class="p"><a href="topics/SOP-PRJ-03_02_Pengendalian_Schedule_Proyek.htm" onclick="return LinkClick('110',false,true)" target="content" title="3.2 Pengendalian Schedule Proyek" onmousemove="window.status='3.2 Pengendalian Schedule Proyek'"><img src="icons/11.gif" class="p"> <span id="l110" class="unselected">3.2 Pengendalian Schedule Proyek</span></a></nobr></div>
+</div><div><nobr><img src="icons/line.gif" class="p"><img src="icons/tshaped.gif" class="p"><a href="topics/SOP-PRJ-04_Pengajuan_Dan_Persetujuan_Material_Sample.htm" onclick="return LinkClick('111',false,true)" target="content" title="SOP-PRJ-04 - PENGAJUAN DAN PERSETUJUAN MATERIAL SAMPLE" onmousemove="window.status='SOP-PRJ-04 - PENGAJUAN DAN PERSETUJUAN MATERIAL SAMPLE'"><img src="icons/11.gif" class="p"> <span id="l111" class="unselected">SOP-PRJ-04 - PENGAJUAN DAN PERSETUJUAN MATERIAL SAMPLE</span></a></nobr></div>
+<div><nobr><img src="icons/line.gif" class="p"><a href="#" onClick="return NodeClick('112')"><img id="imgn112" src="icons/tplus.gif" class="p"></a><a href="topics/SOP-PRJ-05_-_Permintaan_Pengadaan_Barang_&_Jasa.htm" onclick="return LinkClick('112',true,true)" onDblClick="return LinkDblClick('112')" target="content" title="SOP-PRJ-05 - PERMINTAAN PENGADAAN BARANG &amp; JASA" onmousemove="window.status='SOP-PRJ-05 - PERMINTAAN PENGADAAN BARANG &amp; JASA'"><img id="img112" src="icons/1.gif" class="p"> <span id="l112" class="unselected">SOP-PRJ-05 - PERMINTAAN PENGADAAN BARANG &amp; JASA</span></a></nobr></div>
+<div id="d112" style="display:none"><div><nobr><img src="icons/line.gif" class="p"><img src="icons/line.gif" class="p"><img src="icons/tshaped.gif" class="p"><a href="topics/SOP-PRJ-05_01_Permintaan_Barang_Material_melalui_Purschase_Request___PR.htm" onclick="return LinkClick('113',false,true)" target="content" title="5.1 Permintaan Barang/Material melalui Purschase Request / PR" onmousemove="window.status='5.1 Permintaan Barang/Material melalui Purschase Request / PR'"><img src="icons/11.gif" class="p"> <span id="l113" class="unselected">5.1 Permintaan Barang/Material melalui Purschase Request / PR</span></a></nobr></div>
+<div><nobr><img src="icons/line.gif" class="p"><img src="icons/line.gif" class="p"><img src="icons/upangle.gif" class="p"><a href="topics/SOP-PRJ-05_02_Permintaan_Mandor_Subkont_Terseleksi.htm" onclick="return LinkClick('114',false,true)" target="content" title="5.2 Permintaan Mandor/Subkont Terseleksi" onmousemove="window.status='5.2 Permintaan Mandor/Subkont Terseleksi'"><img src="icons/11.gif" class="p"> <span id="l114" class="unselected">5.2 Permintaan Mandor/Subkont Terseleksi</span></a></nobr></div>
+</div><div><nobr><img src="icons/line.gif" class="p"><a href="#" onClick="return NodeClick('115')"><img id="imgn115" src="icons/tplus.gif" class="p"></a><a href="topics/SOP-PRJ-06_-_PENANGANAN_MATERIAL-BARANG_DI_SITE_PROYEK.htm" onclick="return LinkClick('115',true,true)" onDblClick="return LinkDblClick('115')" target="content" title="SOP-PRJ-06 - PENANGANAN MATERIAL-BARANG DI SITE PROYEK" onmousemove="window.status='SOP-PRJ-06 - PENANGANAN MATERIAL-BARANG DI SITE PROYEK'"><img id="img115" src="icons/1.gif" class="p"> <span id="l115" class="unselected">SOP-PRJ-06 - PENANGANAN MATERIAL-BARANG DI SITE PROYEK</span></a></nobr></div>
+<div id="d115" style="display:none"><div><nobr><img src="icons/line.gif" class="p"><img src="icons/line.gif" class="p"><img src="icons/tshaped.gif" class="p"><a href="topics/SOP-PRJ-06_01_Penerimaan_Material_Barang_di_Site.htm" onclick="return LinkClick('116',false,true)" target="content" title="6.1 Penerimaan Material/Barang di Site" onmousemove="window.status='6.1 Penerimaan Material/Barang di Site'"><img src="icons/11.gif" class="p"> <span id="l116" class="unselected">6.1 Penerimaan Material/Barang di Site</span></a></nobr></div>
+<div><nobr><img src="icons/line.gif" class="p"><img src="icons/line.gif" class="p"><img src="icons/upangle.gif" class="p"><a href="topics/SOP-PRJ-06_02_Pengelolaan_Material_Inventory_di_Site.htm" onclick="return LinkClick('117',false,true)" target="content" title="6.2 Pengelolaan Material Inventory di Site" onmousemove="window.status='6.2 Pengelolaan Material Inventory di Site'"><img src="icons/11.gif" class="p"> <span id="l117" class="unselected">6.2 Pengelolaan Material Inventory di Site</span></a></nobr></div>
+</div><div><nobr><img src="icons/line.gif" class="p"><img src="icons/tshaped.gif" class="p"><a href="topics/SOP-PRJ-07_Pelaporan_Catatan_Pengeluaran_Proyek-LPP.htm" onclick="return LinkClick('118',false,true)" target="content" title="SOP-PRJ-07 - PELAPORAN CATATAN PENGELUARAN PROYEK-LPP" onmousemove="window.status='SOP-PRJ-07 - PELAPORAN CATATAN PENGELUARAN PROYEK-LPP'"><img src="icons/11.gif" class="p"> <span id="l118" class="unselected">SOP-PRJ-07 - PELAPORAN CATATAN PENGELUARAN PROYEK-LPP</span></a></nobr></div>
+<div><nobr><img src="icons/line.gif" class="p"><img src="icons/tshaped.gif" class="p"><a href="topics/SOP-PRJ-08_Pengajuan_Contract_Invoice_Subkontraktor-Mandor.htm" onclick="return LinkClick('119',false,true)" target="content" title="SOP-PRJ-08 - PENGAJUAN CONTRACT INVOICE SUBKONTRAKTOR-MANDOR" onmousemove="window.status='SOP-PRJ-08 - PENGAJUAN CONTRACT INVOICE SUBKONTRAKTOR-MANDOR'"><img src="icons/11.gif" class="p"> <span id="l119" class="unselected">SOP-PRJ-08 - PENGAJUAN CONTRACT INVOICE SUBKONTRAKTOR-MANDOR</span></a></nobr></div>
+<div><nobr><img src="icons/line.gif" class="p"><img src="icons/upangle.gif" class="p"><a href="topics/SOP-PRJ-09_Pengendalian_Budget_Proyek.htm" onclick="return LinkClick('120',false,true)" target="content" title="SOP-PRJ-09 - PENGENDALIAN BUDGET PROYEK" onmousemove="window.status='SOP-PRJ-09 - PENGENDALIAN BUDGET PROYEK'"><img src="icons/11.gif" class="p"> <span id="l120" class="unselected">SOP-PRJ-09 - PENGENDALIAN BUDGET PROYEK</span></a></nobr></div>
+</div><div><nobr><a href="#" onClick="return NodeClick('121')"><img id="imgn121" src="icons/uaplus.gif" class="p"></a><a href="topics/BUDGETING.htm" onclick="return LinkClick('121',true,true)" onDblClick="return LinkDblClick('121')" target="content" title="BUDGETING" onmousemove="window.status='BUDGETING'"><img id="img121" src="icons/1.gif" class="p"> <span id="l121" class="unselected">BUDGETING</span></a></nobr></div>
+<div id="d121" style="display:none"><div><nobr><img src="icons/blank.gif" class="p"><img src="icons/tshaped.gif" class="p"><a href="topics/BUDGETING-01_PROSEDUR_PEMBENTUKAN_CORE_3.htm" onclick="return LinkClick('122',false,true)" target="content" title="1. PROSEDUR PEMBENTUKAN CORE 3" onmousemove="window.status='1. PROSEDUR PEMBENTUKAN CORE 3'"><img src="icons/11.gif" class="p"> <span id="l122" class="unselected">1. PROSEDUR PEMBENTUKAN CORE 3</span></a></nobr></div>
+<div><nobr><img src="icons/blank.gif" class="p"><img src="icons/tshaped.gif" class="p"><a href="topics/BUDGETING-02_PROSEDUR_PRA-ANALISIS_PROJECT.htm" onclick="return LinkClick('123',false,true)" target="content" title="2. PROSEDUR PRA-ANALISIS PROJECT" onmousemove="window.status='2. PROSEDUR PRA-ANALISIS PROJECT'"><img src="icons/11.gif" class="p"> <span id="l123" class="unselected">2. PROSEDUR PRA-ANALISIS PROJECT</span></a></nobr></div>
+<div><nobr><img src="icons/blank.gif" class="p"><img src="icons/tshaped.gif" class="p"><a href="topics/BUDGETING-03_PROSEDUR_PERUMUSAN_PERENCANAAN_BUDGET_(ORIGINAL_BUDGET).htm" onclick="return LinkClick('124',false,true)" target="content" title="3. PROSEDUR PERUMUSAN PERENCANAAN BUDGET (ORIGINAL BUDGET)" onmousemove="window.status='3. PROSEDUR PERUMUSAN PERENCANAAN BUDGET (ORIGINAL BUDGET)'"><img src="icons/11.gif" class="p"> <span id="l124" class="unselected">3. PROSEDUR PERUMUSAN PERENCANAAN BUDGET (ORIGINAL BUDGET)</span></a></nobr></div>
+<div><nobr><img src="icons/blank.gif" class="p"><img src="icons/tshaped.gif" class="p"><a href="topics/BUDGETING-04_PROSEDUR_PENGKAJIAN_PERUMUSAN_PERENCANAAN_BUDGET_(ORIGINAL_BUDGET).htm" onclick="return LinkClick('125',false,true)" target="content" title="4. PROSEDUR PENGKAJIAN PERUMUSAN PERENCANAAN BUDGET (ORIGINAL BUDGET)" onmousemove="window.status='4. PROSEDUR PENGKAJIAN PERUMUSAN PERENCANAAN BUDGET (ORIGINAL BUDGET)'"><img src="icons/11.gif" class="p"> <span id="l125" class="unselected">4. PROSEDUR PENGKAJIAN PERUMUSAN PERENCANAAN BUDGET (ORIGINAL BUDGET)</span></a></nobr></div>
+<div><nobr><img src="icons/blank.gif" class="p"><img src="icons/tshaped.gif" class="p"><a href="topics/BUDGETING-05_PROSEDUR_PENYUSUNAN_RENCANA_ANGGARAN_BIAYA_RAB__.htm" onclick="return LinkClick('126',false,true)" target="content" title="5. PROSEDUR PENYUSUNAN RENCANA ANGGARAN BIAYA/RAB" onmousemove="window.status='5. PROSEDUR PENYUSUNAN RENCANA ANGGARAN BIAYA/RAB'"><img src="icons/11.gif" class="p"> <span id="l126" class="unselected">5. PROSEDUR PENYUSUNAN RENCANA ANGGARAN BIAYA/RAB</span></a></nobr></div>
+<div><nobr><img src="icons/blank.gif" class="p"><img src="icons/upangle.gif" class="p"><a href="topics/BUDGETING-06_PERENCANAAN_STRUKTUR_PENGENDALIAN_BUDGET_.htm" onclick="return LinkClick('127',false,true)" target="content" title="6. PROSEDUR PERENCANAAN STRUKTUR PENGENDALIAN BUDGET" onmousemove="window.status='6. PROSEDUR PERENCANAAN STRUKTUR PENGENDALIAN BUDGET'"><img src="icons/11.gif" class="p"> <span id="l127" class="unselected">6. PROSEDUR PERENCANAAN STRUKTUR PENGENDALIAN BUDGET</span></a></nobr></div>
+</div><script>divlist = [2,6,7,8,11,12,16,20,25,29,32,35,39,40,45,47,48,53,56,63,64,65,68,69,74,79,82,83,85,88,90,91,93,95,96,100,105,108,112,115,121]</script>
+</body>
+</html>
